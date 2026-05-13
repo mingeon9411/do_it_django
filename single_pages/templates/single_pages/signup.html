@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <title>회원가입</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #f5f6fa;
+            color: #333;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: #aad4f5;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        header a:hover { text-decoration: underline; }
+
+        .container {
+            max-width: 480px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: border 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2980b9;
+        }
+
+        .helptext {
+            font-size: 0.78rem;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .errorlist {
+            list-style: none;
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover { background: #1a252f; }
+
+        .login-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .login-link a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+
+        .login-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <span>회원가입</span>
+        <a href="/blog/">← Blog 목록으로</a>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>회원가입</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <p class="helptext">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <ul class="errorlist"><li>{{ error }}</li></ul>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="submit-btn">가입하기</button>
+            </form>
+            <p class="login-link">이미 계정이 있으신가요? <a href="/admin/">로그인</a></p>
+        </div>
+    </div>
+</body>
+</html>
