@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 from .models import Post
+from .forms import PostForm
 
 # Create your views here.
 class PostList(ListView):
@@ -12,6 +13,17 @@ class PostList(ListView):
 class PostDetail(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
+
+
+def post_create(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save()
+            return redirect(post.get_absolute_url())
+    else:
+        form = PostForm()
+    return render(request, 'blog/post_form.html', {'form': form})
 
 
 # def index(request):

@@ -92,7 +92,7 @@
                     {% if p.head_image %}
                     <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p.title }}" style="height: 350px; object-fit: cover;">
                     {% else %}
-                    <img class="card-img-top" src="https://dummyimage.com/850x350/ced4da/6c757d.jpg" alt="Card image cap" style="height: 350px; object-fit: cover;">
+                    <img class="card-img-top" src="https://picsum.photos/seed/{{ p.pk }}/850/350" alt="{{ p.title }}" style="height: 350px; object-fit: cover;">
                     {% endif %}
                     <div class="card-body">
                         <h2 class="card-title">{{ p.title}}</h2>
