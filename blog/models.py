@@ -3,10 +3,13 @@ from django.db import models
 class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)  # 이렇게 수정!
+    created_at = models.DateTimeField(auto_now_add=True)
+    head_image = models.ImageField(upload_to='blog/images/', blank=True)
+    category = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return f'[{self.pk}] {self.title}'
     
     def get_absolute_url(self):
         return f'/blog/{self.pk}/'
+    

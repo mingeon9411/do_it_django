@@ -98,9 +98,7 @@
     <body>
         <div id="scroll-progress"></div>
 
-        <nav>
-            <a href="/blog/">Blog</a>
-        </nav>
+        {% include 'blog/signup.html' %}
         <h1 id="top">{{ post.title }}</h1>
         <h4>{{ post.created_at}}</h4>
         <p>{{post.content}}</p>
@@ -110,7 +108,7 @@
         <hr class="thick-line"/>
         <h3 id="comment-section">
             <span class="shake">😂</span>
-            <span class="color-change">❤️여기 댓글이 들어올 수 있겠죠?❤️</span>
+            <span class="color-change">댓글을 여기에 추가해주세요.</span>
             <span class="pulse">😂</span>
         </h3>
 
