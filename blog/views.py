@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.db.models import Count
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-from .models import Post, Category
+from .models import Post, Category, Tag
 from .forms import PostForm, CommentForm
 
 
@@ -61,6 +61,23 @@ class PostListByCategory(ListView):
             context['category'] = '미분류'
         else:
             context['category'] = Category.objects.get(slug=slug)
+        return context
+
+
+class PostListByTag(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    ordering = '-pk'
+
+    def get_queryset(self):
+        tag = Tag.objects.get(slug=self.kwargs['slug'])
+        return Post.objects.filter(tags=tag).order_by('-pk')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.annotate(post_count=Count('post'))
+        context['no_category_post_count'] = Post.objects.filter(category=None).count()
+        context['tag'] = Tag.objects.get(slug=self.kwargs['slug'])
         return context
 
 
