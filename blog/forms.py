@@ -2,9 +2,16 @@ from django import forms
 from .models import Post, Comment
 
 class PostForm(forms.ModelForm):
+    tags_input = forms.CharField(
+        required=False,
+        label='태그',
+        help_text='쉼표(,)로 구분하여 입력  예) 파이썬, 장고, 웹',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '태그1, 태그2, 태그3'}),
+    )
+
     class Meta:
         model = Post
-        fields = ['title', 'content', 'head_image', 'file_upload', 'category']
+        fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
 
 
 class CommentForm(forms.ModelForm):

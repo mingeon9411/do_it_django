@@ -1,10 +1,18 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, DetailView
-from django.db.models import Count
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.db.models import Count, Q
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from .models import Post, Category, Tag
 from .forms import PostForm, CommentForm
+
+
+def _apply_tags(post, tags_input):
+    for tag_name in tags_input.split(','):
+        tag_name = tag_name.strip()
+        if tag_name:
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            post.tags.add(tag)
 
 
 class PostList(ListView):
@@ -26,12 +34,13 @@ class PostDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.annotate(post_count=Count('post'))
+        context['no_category_post_count'] = Post.objects.filter(category=None).count()
         context['comments'] = self.object.comment_set.order_by('created_at')
         context['comment_form'] = CommentForm()
         return context
 
-    def post(self, request):
-        post = self.get_object()
+    def post(self, request, pk):
+        post = Post.objects.get(pk=pk)
         form = CommentForm(request.POST, request.FILES)
         if form.is_valid():
             comment = form.save(commit=False)
@@ -57,10 +66,7 @@ class PostListByCategory(ListView):
         slug = self.kwargs['slug']
         context['categories'] = Category.objects.annotate(post_count=Count('post'))
         context['no_category_post_count'] = Post.objects.filter(category=None).count()
-        if slug == 'no_category':
-            context['category'] = '미분류'
-        else:
-            context['category'] = Category.objects.get(slug=slug)
+        context['category'] = '미분류' if slug == 'no_category' else Category.objects.get(slug=slug)
         return context
 
 
@@ -81,15 +87,56 @@ class PostListByTag(ListView):
         return context
 
 
-def post_create(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save()
-            return redirect(post.get_absolute_url())
-    else:
-        form = PostForm()
-    return render(request, 'blog/post_form.html', {'form': form})
+class PostCreate(CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def form_valid(self, form):
+        post = form.save()
+        _apply_tags(post, form.cleaned_data.get('tags_input', ''))
+        return redirect(post.get_absolute_url())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_update'] = False
+        return context
+
+
+class PostUpdate(UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['tags_input'] = ', '.join(self.object.tags.values_list('name', flat=True))
+        return initial
+
+    def form_valid(self, form):
+        post = form.save()
+        post.tags.clear()
+        _apply_tags(post, form.cleaned_data.get('tags_input', ''))
+        return redirect(post.get_absolute_url())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_update'] = True
+        return context
+
+
+def post_search(request):
+    q = request.GET.get('q', '').strip()
+    posts = Post.objects.filter(
+        Q(title__icontains=q) | Q(content__icontains=q)
+    ).order_by('-pk') if q else Post.objects.none()
+    categories = Category.objects.annotate(post_count=Count('post'))
+    return render(request, 'blog/post_list.html', {
+        'object_list': posts,
+        'categories': categories,
+        'no_category_post_count': Post.objects.filter(category=None).count(),
+        'search_query': q,
+    })
 
 
 def signup(request):

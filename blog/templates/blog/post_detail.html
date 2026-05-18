@@ -7,8 +7,56 @@
     <title>{{ post.title }} - Blog</title>
     <link rel="stylesheet" href="{% static 'blog/bootstrap/bootstrap.min.css' %}" media="screen">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/dynamic/pretendard-dynamic-subset.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap">
     <style>
         body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+        .navbar-brand { font-family: 'Dancing Script', cursive; font-size: 1.6rem; letter-spacing: 1px; }
+        .font-ctrl {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .font-ctrl button {
+            width: 36px; height: 32px;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #003478;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .font-ctrl button:first-child { border-radius: 20px 0 0 20px; }
+        .font-ctrl button:last-child  { border-radius: 0 20px 20px 0; }
+        .font-ctrl button:hover { background: #003478; color: #fff; }
+        .font-ctrl .size-display {
+            font-size: 0.78rem; color: #666; font-weight: 600;
+            min-width: 38px; text-align: center;
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+            height: 32px; line-height: 32px;
+            background: #f8f9fa;
+        }
+        .k-card { border:none; border-radius:6px; box-shadow:0 2px 10px rgba(0,0,0,0.08); overflow:hidden; margin-bottom:1.5rem; }
+        .k-card-header { background:#003478; color:#fff; font-weight:700; font-size:0.9rem; letter-spacing:1px; padding:8px 13px; display:flex; align-items:center; gap:6px; }
+        .k-card-header::before { content:''; display:inline-block; width:3px; height:13px; background:#C60C30; border-radius:2px; }
+        .k-card-body { background:#fff; padding:10px 12px; border-left:3px solid #003478; }
+        .k-card-body .form-control { border-color:#ccc; font-size:0.82rem; padding:5px 10px; }
+        .k-card-body .form-control:focus { border-color:#003478; box-shadow:0 0 0 0.2rem rgba(0,52,120,0.15); }
+        .k-search-btn { background:#C60C30; color:#fff; border:none; font-size:0.82rem; padding:5px 11px; }
+        .k-search-btn:hover { background:#a00926; color:#fff; }
+        .k-category-list { list-style:none; padding:0; margin:0; }
+        .k-category-list li { border-bottom:1px dashed #eee; padding:4px 0; }
+        .k-category-list li:last-child { border-bottom:none; }
+        .k-category-list a { color:#003478; text-decoration:none; font-size:0.9rem; font-weight:500; transition:color 0.2s, padding-left 0.2s; display:block; }
+        .k-category-list a:hover { color:#C60C30; padding-left:5px; }
+        .k-about-text { font-size:0.82rem; color:#555; margin-bottom:8px; line-height:1.6; }
+        .k-about-btn { background:#003478; color:#fff; border:none; font-size:0.8rem; padding:5px 12px; border-radius:4px; text-decoration:none; display:inline-block; transition:background 0.2s; }
+        .k-about-btn:hover { background:#C60C30; color:#fff; }
     </style>
 </head>
 <body>
@@ -36,7 +84,17 @@
             <div class="col-lg-8">
                 <article>
                     <header class="mb-4">
-                        <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
+                            <div class="d-flex flex-column align-items-center ms-3 flex-shrink-0" style="gap:4px;">
+                                <span style="font-size:0.8rem; color:#999; white-space:nowrap;">글꼴 크기 변경</span>
+                                <div class="font-ctrl">
+                                    <button onclick="changeFont(-1)" title="글자 줄이기">A-</button>
+                                    <span class="size-display" id="fontSizeDisplay">15px</span>
+                                    <button onclick="changeFont(1)" title="글자 키우기">A+</button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="text-muted fst-italic mb-2">
                             {{ post.created_at|date:"Y년 m월 d일 H:i" }}에 작성됨
                         </div>
@@ -47,6 +105,11 @@
                         <a class="badge bg-light text-secondary text-decoration-none"
                            href="/blog/category/no_category/">미분류</a>
                         {% endif %}
+                        {% for tag in post.tags.all %}
+                        <a class="badge text-decoration-none ms-1"
+                           style="background:#e8eef7; color:#003478;"
+                           href="{{ tag.get_absolute_url }}">🏷️ {{ tag.name }}</a>
+                        {% endfor %}
                     </header>
 
                     {% if post.head_image %}
@@ -62,9 +125,14 @@
                     </figure>
                     {% endif %}
 
-                    <section class="mb-5" style="font-size: 0.95rem; line-height: 1.9;">
+                    <section id="postContent" class="mb-4" style="font-size: 15px; line-height: 1.9;">
                         {{ post.content|linebreaks }}
                     </section>
+
+                    <div class="d-flex gap-2 mb-5">
+                        <a href="/blog/{{ post.pk }}/update/" class="btn btn-sm btn-outline-secondary">✏️ 수정</a>
+                        <a href="/blog/" class="btn btn-sm btn-outline-dark">← 목록으로</a>
+                    </div>
                 </article>
 
                 <div class="mb-5">
@@ -135,26 +203,68 @@
             </div>
 
             <!-- 사이드바 -->
-            <div class="col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-header">검색</div>
-                    <div class="card-body">
-                        <div class="input-group">
-                            <input class="form-control" type="text" placeholder="검색어 입력..." />
-                            <button class="btn btn-primary" type="button">Go!</button>
-                        </div>
+            <div class="col-lg-4" style="position:sticky; top:20px; align-self:flex-start; height:fit-content;">
+
+                <!-- 검색 -->
+                <div class="k-card">
+                    <div class="k-card-header">검 색</div>
+                    <div class="k-card-body">
+                        <form method="get" action="/blog/search/">
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control" placeholder="검색어 입력...">
+                                <button class="k-search-btn" type="submit">Go!</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="card mb-4">
-                    <div class="card-header">카테고리</div>
-                    <div class="card-body">
-                        <ul class="list-unstyled mb-0">
-                            <li class="mb-1"><a href="/blog/">전체 보기</a></li>
+                <!-- 카테고리 -->
+                <div class="k-card">
+                    <div class="k-card-header">카테고리</div>
+                    <div class="k-card-body">
+                        <ul class="k-category-list">
+                            <li><a href="/blog/">📋 전체 보기</a></li>
                             {% for c in categories %}
-                            <li class="mb-1"><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+                            <li><a href="{{ c.get_absolute_url }}">{{ c.name }} ({{ c.post_count }})</a></li>
                             {% endfor %}
+                            {% if no_category_post_count %}
+                            <li><a href="/blog/category/no_category/">미분류 ({{ no_category_post_count }})</a></li>
+                            {% endif %}
                         </ul>
+                    </div>
+                </div>
+
+                <!-- 소개 -->
+                <div class="k-card">
+                    <div class="k-card-header">소 개</div>
+                    <div class="k-card-body">
+                        <p class="k-about-text"><br>안녕하세요 k-Blog 입니다.</p>
+                        <a href="/about_me/" class="k-about-btn">소개 페이지 보기</a>
+                    </div>
+                </div>
+
+                <!-- 세계 시각 -->
+                <div class="k-card">
+                    <div class="k-card-header">🕐 세계 시각</div>
+                    <div class="k-card-body" style="padding:14px 16px;">
+                        <div style="text-align:center; margin-bottom:14px; padding-bottom:12px; border-bottom:2px solid #003478;">
+                            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px;">
+                                <img src="https://flagcdn.com/w20/kr.png" width="20" style="border-radius:2px;">
+                                <span style="font-size:0.85rem;font-weight:600;color:#003478;">대한민국 (서울)</span>
+                            </div>
+                            <div id="kr-date" style="font-size:0.8rem;color:#666;margin-bottom:2px;"></div>
+                            <div id="kr-time" style="font-size:1.8rem;font-weight:700;color:#C60C30;letter-spacing:2px;"></div>
+                            <div id="kr-weekday" style="font-size:0.8rem;color:#999;"></div>
+                        </div>
+                        <div id="world-clocks"></div>
+                    </div>
+                </div>
+
+                <!-- 환율 -->
+                <div class="k-card">
+                    <div class="k-card-header">💱 오늘의 환율</div>
+                    <div class="k-card-body" id="exchange-widget">
+                        <div style="text-align:center;color:#999;font-size:0.85rem;padding:10px 0;">불러오는 중...</div>
                     </div>
                 </div>
             </div>
@@ -163,10 +273,88 @@
 
     <footer class="py-5 bg-dark">
         <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; Do It Django 2024</p>
+            <p class="m-0 text-center text-white">Copyright 2026 &copy; by mingeon reserved.</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /* ── 세계 시각 ── */
+        const weekdays = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+        const worldZones = [
+            { country:'us', name:'미국 (뉴욕)',   tz:'America/New_York' },
+            { country:'gb', name:'영국 (런던)',   tz:'Europe/London' },
+            { country:'fr', name:'프랑스 (파리)', tz:'Europe/Paris' },
+            { country:'de', name:'독일 (베를린)', tz:'Europe/Berlin' },
+            { country:'cn', name:'중국 (베이징)', tz:'Asia/Shanghai' },
+            { country:'jp', name:'일본 (도쿄)',   tz:'Asia/Tokyo' },
+        ];
+        const worldContainer = document.getElementById('world-clocks');
+        worldZones.forEach(z => {
+            const div = document.createElement('div');
+            div.id = 'clock-' + z.country;
+            div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed #eee;';
+            div.innerHTML = `<span style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:#444;"><img src="https://flagcdn.com/w20/${z.country}.png" width="18" style="border-radius:2px;">${z.name}</span><span id="time-${z.country}" style="font-size:0.88rem;font-weight:700;color:#003478;letter-spacing:1px;"></span>`;
+            worldContainer.appendChild(div);
+        });
+        function getTimeStr(tz) {
+            return new Intl.DateTimeFormat('ko-KR', { timeZone:tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }).format(new Date());
+        }
+        function updateClocks() {
+            const kst = new Date(Date.now() + 9*60*60*1000);
+            const y=kst.getUTCFullYear(), m=String(kst.getUTCMonth()+1).padStart(2,'0'), d=String(kst.getUTCDate()).padStart(2,'0');
+            const h=String(kst.getUTCHours()).padStart(2,'0'), mi=String(kst.getUTCMinutes()).padStart(2,'0'), s=String(kst.getUTCSeconds()).padStart(2,'0');
+            document.getElementById('kr-date').textContent    = `${y}년 ${m}월 ${d}일`;
+            document.getElementById('kr-time').textContent    = `${h}:${mi}:${s}`;
+            document.getElementById('kr-weekday').textContent = weekdays[kst.getUTCDay()];
+            worldZones.forEach(z => { const el=document.getElementById('time-'+z.country); if(el) el.textContent=getTimeStr(z.tz); });
+        }
+        updateClocks(); setInterval(updateClocks, 1000);
+
+        /* ── 환율 ── */
+        async function loadExchangeRates() {
+            try {
+                const res = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json');
+                const data = await res.json();
+                const rates = data.eur, krw = rates.krw;
+                const currencies = [
+                    { code:'usd', country:'us', name:'미국 달러',   mult:1 },
+                    { code:'eur', country:'eu', name:'유로',        mult:1 },
+                    { code:'jpy', country:'jp', name:'일본 엔',     mult:100 },
+                    { code:'cny', country:'cn', name:'중국 위안',   mult:1 },
+                    { code:'gbp', country:'gb', name:'영국 파운드', mult:1 },
+                ];
+                let html = `<div style="font-size:0.75rem;color:#999;margin-bottom:10px;text-align:right;">기준일: ${data.date}</div>`;
+                for (const c of currencies) {
+                    const rate = c.code==='eur' ? krw*c.mult : (krw/rates[c.code])*c.mult;
+                    const label = c.mult===100 ? `100 ${c.code.toUpperCase()}` : `1 ${c.code.toUpperCase()}`;
+                    html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed #eee;"><span style="font-size:0.85rem;color:#333;display:flex;align-items:center;gap:6px;"><img src="https://flagcdn.com/w20/${c.country}.png" width="20" style="border-radius:2px;">${label}</span><span style="font-weight:700;color:#C60C30;font-size:0.9rem;">${Math.round(rate).toLocaleString()}원</span></div>`;
+                }
+                document.getElementById('exchange-widget').innerHTML = html;
+            } catch(e) {
+                document.getElementById('exchange-widget').innerHTML = '<div style="color:#999;font-size:0.85rem;text-align:center;padding:10px 0;">환율 정보를 불러올 수 없습니다.</div>';
+            }
+        }
+        loadExchangeRates();
+
+        /* ── 글꼴 크기 ── */
+        const MIN = 11, MAX = 28;
+        const content = document.getElementById('postContent');
+        const display = document.getElementById('fontSizeDisplay');
+
+        let size = parseInt(localStorage.getItem('postFontSize')) || 15;
+        applySize(size);
+
+        function changeFont(delta) {
+            size = Math.min(MAX, Math.max(MIN, size + delta));
+            applySize(size);
+            localStorage.setItem('postFontSize', size);
+        }
+
+        function applySize(s) {
+            content.style.fontSize = s + 'px';
+            display.textContent = s + 'px';
+        }
+    </script>
 </body>
 </html>
