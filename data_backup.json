@@ -1,0 +1,80 @@
+[
+  {
+    "model": "blog.category",
+    "pk": 1,
+    "fields": {
+      "name": "뉴스",
+      "slug": "뉴스"
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 2,
+    "fields": {
+      "name": "문화 & 예술",
+      "slug": "문화-예술"
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 3,
+    "fields": {
+      "name": "프로그래밍",
+      "slug": "프로그래밍"
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 6,
+    "fields": {
+      "title": "내달 BTS월드투어 인 부산…드론쇼·팝업 도시는 축제장",
+      "content": "부산시가 6월 12~13일 열리는 BTS 월드투어 아리랑 인 부산 공연을 앞두고 도시 전역을 축제 공간으로 조성하는 대규모 관광 프로젝트를 추진한다.\n\n주요 계획으로는 김해공항과 부산역에 웰컴센터와 환영 포토존을 조성하고, 광안대교와 부산타워에 경관조명을 점등한다. 광안리해수욕장에서는 1000대 규모 드론라이팅쇼가 펼쳐질 예정이다.\n\n송상현광장에는 체험 공간을 조성하고, BTS 테마 시티투어버스와 4개 테마 관광코스를 운영해 체류형 관광을 유도한다. 부산항 제1부두에서는 로컬 식음료 브랜드가 참여하는 팝업을 운영하며, 웰컴키트는 1만 명에게 제공된다.\n\n출처: 뉴시스 진민현 기자 (2026.05.18)\n원문: https://www.newsis.com/view/NISX20260518_0003633710",
+      "created_at": "2026-05-18 10:12:16.277453",
+      "head_image": "blog/images/NISI20260518_0002138296_web.jpg",
+      "file_upload": "",
+      "category": 2
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 7,
+    "fields": {
+      "title": "K-AI, 산업 현장으로 확산…법률·게임·뷰티·스타트업까지",
+      "content": "K-AI, 산업 현장으로 확산…법률·게임·뷰티·스타트업까지\n\n국내 AI 기업들이 개발한 거대언어모델(LLM)이 법률, 게임, 뷰티, 스타트업 등 다양한 산업 분야로 빠르게 확산되고 있다.\n\n■ 업스테이지 × 로앤컴퍼니 — 법률 AI\n\n업스테이지의 'Solar Open' 모델이 법률 AI 서비스 '슈퍼로이어'에 적용됐다. 판례 검색, 법리 검토, 서류 초안 작성 등 변호사 업무를 AI가 직접 지원한다.\n\n■ SK텔레콤 × 크래프톤 — 게임 AI 캐릭터\n\nSK텔레콤의 'A.X K1' 모델이 게임 'PUBG: 배틀그라운드'의 AI 캐릭터 '앨라이' 개발에 활용됐다. 한국어 대화 품질을 대폭 강화한 것이 특징이다.\n\n■ LG AI연구원 × LG생활건강 — 신물질 개발\n\nLG AI연구원의 'EXAONE Discovery'를 통해 화장품 신물질 개발 기간이 기존 22개월에서 하루 수준으로 단축됐다.\n\n■ NC AI — 스타트업 생태계 지원\n\nNC AI는 스타트업 대상 'AI 생태계 구축 사업'에 참여해 산업 특화 솔루션 개발을 지원하고 있다.\n\n■ 정부 '독자 AI 파운데이션 모델' 사업\n\n정부는 8월 2차 평가를 예정하고 있으며, 산업 현장 적용 가능성과 모델 독자성을 주요 평가 요소로 삼고 있다. 연말 최종 2개 팀을 선정할 계획이다.\n\n출처: 이데일리 김현아 기자 (2026.05.18)\n원문: https://www.edaily.co.kr/News/Read?newsId=02653526645450232&mediaCodeNo=257\n",
+      "created_at": "2026-05-18 11:21:34.157647",
+      "head_image": "blog/images/PS26051800415.jpg",
+      "file_upload": "",
+      "category": 1
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 9,
+    "fields": {
+      "title": "머스크 \"Grok V9 학습 완료…3~4주 내 출시\"",
+      "content": "일론 머스크 테슬라 최고경영자가 X에서 Grok 기본 모델 V9의 학습이 완료됐으며 3~4주 안에 출시될 예정이라고 밝혔다.\n\nPANews에 따르면 머스크는 Grok 모델 업데이트가 더디다는 지적에 대해 \"0.5TB Grok 기본 모델 V8을 며칠마다 개선하고 있으며, 1.5TB V9 모델은 방금 학습을 마쳤다\"고 말했다.\n\n그는 이어 V9 모델에 Cursor 데이터를 추가해 추가 학습을 진행한 뒤 SFT와 RL 학습을 거칠 계획이라고 설명했다.\n\n출처: 토큰포스트 속보 (2026.05.17)\n원문: https://www.tokenpost.kr/news/breaking/360541",
+      "created_at": "2026-05-18 12:00:03.598096",
+      "head_image": "blog/images/t0x8mt4lh4_grok_v9.png",
+      "file_upload": "",
+      "category": 3
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$1200000$ohe79arQD6WwpNjzkpkQai$cjfdkU0COAIo67B45u9j+gedQs/w8scNtZMCy1qtF2g=",
+      "last_login": "2026-05-14 16:23:41.450839",
+      "is_superuser": true,
+      "username": "james",
+      "first_name": "",
+      "last_name": "",
+      "email": "james@doitdjango.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2026-05-12 08:13:55.692658",
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]
