@@ -1,32 +1,464 @@
-{% extends 'blog/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>로그인 - the K-Blog</title>
+    <!-- 깜빡임 방지: 렌더 전에 테마 적용 -->
+    <script>
+        (function(){
+            const t = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+    <link rel="stylesheet" href="{% static 'blog/bootstrap/bootstrap.min.css' %}" media="screen">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/dynamic/pretendard-dynamic-subset.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-{% block head_title %}로그인{% endblock %}
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
 
-{% block main_area %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="mb-4">로그인</h2>
-        {% if form.errors %}
-            <div class="alert alert-danger">아이디 또는 비밀번호가 올바르지 않습니다.</div>
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group mb-3">
-                <label for="{{ form.username.id_for_label }}">아이디</label>
-                <input type="text" name="username" id="{{ form.username.id_for_label }}"
-                       class="form-control {% if form.username.errors %}is-invalid{% endif %}"
-                       autofocus>
-            </div>
-            <div class="form-group mb-3">
-                <label for="{{ form.password.id_for_label }}">비밀번호</label>
-                <input type="password" name="password" id="{{ form.password.id_for_label }}"
-                       class="form-control {% if form.password.errors %}is-invalid{% endif %}">
-            </div>
-            <input type="hidden" name="next" value="{{ next }}">
-            <button type="submit" class="btn btn-primary btn-block">로그인</button>
-        </form>
-        <hr>
-        <p class="text-center">아직 계정이 없으신가요? <a href="/signup/">회원가입</a></p>
+        /* ════════════════════════════════
+           라이트 모드 (기본)
+        ════════════════════════════════ */
+        :root, [data-theme="light"] {
+            --bg-base:        #f0f4ff;
+            --bg-gradient:    linear-gradient(135deg, #ddeaff 0%, #f0f4ff 40%, #ffe8ec 100%);
+            --orb1:           rgba(0, 52, 120, 0.12);
+            --orb2:           rgba(198, 12, 48, 0.10);
+            --orb3:           rgba(74, 144, 217, 0.10);
+            --nav-link:       #003478;
+            --nav-link-hover: #C60C30;
+            --card-bg:        rgba(255,255,255,0.72);
+            --card-border:    rgba(0, 52, 120, 0.12);
+            --card-shadow:    0 8px 40px rgba(0,52,120,0.13), inset 0 1px 0 rgba(255,255,255,0.9);
+            --title-color:    #003478;
+            --sub-color:      #5a6e90;
+            --label-color:    #334e7a;
+            --input-bg:       rgba(255,255,255,0.9);
+            --input-border:   rgba(0, 52, 120, 0.22);
+            --input-color:    #1a2a4a;
+            --input-ph:       #a0aec0;
+            --input-focus-border: #003478;
+            --input-focus-shadow: rgba(0,52,120,0.2);
+            --divider:        linear-gradient(to right, transparent, rgba(0,52,120,0.15), transparent);
+            --error-bg:       rgba(198,12,48,0.08);
+            --error-border:   rgba(198,12,48,0.3);
+            --error-color:    #8b0020;
+            --signup-color:   #7a8fa8;
+            --signup-link:    #C60C30;
+            --signup-link-h:  #8b0020;
+            --footer-color:   rgba(0,52,120,0.35);
+            --toggle-bg:      rgba(0,52,120,0.1);
+            --toggle-border:  rgba(0,52,120,0.2);
+            --toggle-color:   #003478;
+            --star-color:     rgba(0,52,120,0.25);
+        }
+
+        /* ════════════════════════════════
+           다크 모드
+        ════════════════════════════════ */
+        [data-theme="dark"] {
+            --bg-base:        #1c1c1c;
+            --bg-gradient:    #1c1c1c;
+            --orb1:           rgba(40, 40, 40, 0.0);
+            --orb2:           rgba(40, 40, 40, 0.0);
+            --orb3:           rgba(40, 40, 40, 0.0);
+            --nav-link:       rgba(255,255,255,0.75);
+            --nav-link-hover: #fff;
+            --card-bg:        rgba(255,255,255,0.08);
+            --card-border:    rgba(255,255,255,0.15);
+            --card-shadow:    0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.12);
+            --title-color:    #fff;
+            --sub-color:      rgba(255,255,255,0.5);
+            --label-color:    rgba(255,255,255,0.75);
+            --input-bg:       rgba(255,255,255,0.10);
+            --input-border:   rgba(255,255,255,0.18);
+            --input-color:    #fff;
+            --input-ph:       rgba(255,255,255,0.3);
+            --input-focus-border: rgba(255,255,255,0.5);
+            --input-focus-shadow: rgba(198,12,48,0.25);
+            --divider:        linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            --error-bg:       rgba(198,12,48,0.2);
+            --error-border:   rgba(198,12,48,0.4);
+            --error-color:    #ffb3bf;
+            --signup-color:   rgba(255,255,255,0.45);
+            --signup-link:    #ff8fa3;
+            --signup-link-h:  #ffb3c1;
+            --footer-color:   rgba(255,255,255,0.3);
+            --toggle-bg:      rgba(255,255,255,0.1);
+            --toggle-border:  rgba(255,255,255,0.25);
+            --toggle-color:   #fff;
+            --star-color:     rgba(255,255,255,0.7);
+        }
+
+        /* ── 배경 ── */
+        .bg-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-gradient {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-gradient);
+            transition: background 0.4s ease;
+            animation: bgShift 10s ease-in-out infinite alternate;
+        }
+        @keyframes bgShift {
+            0%   { filter: brightness(1); }
+            100% { filter: brightness(1.06); }
+        }
+
+        /* 별/점 파티클 */
+        .stars { position: absolute; inset: 0; }
+        .star {
+            position: absolute;
+            background: var(--star-color);
+            border-radius: 50%;
+            animation: twinkle var(--d) ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.15; transform: scale(1); }
+            50%       { opacity: 1;    transform: scale(1.4); }
+        }
+
+        /* 떠다니는 블러 원 */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbFloat var(--d) ease-in-out infinite alternate;
+            transition: background 0.4s ease;
+        }
+        .orb-1 { width:420px; height:420px; background: var(--orb1); top:-80px;  left:-100px; --d:14s; --tx:40px;  --ty:30px;  }
+        .orb-2 { width:320px; height:320px; background: var(--orb2); bottom:-60px; right:-60px; --d:11s; --tx:-30px; --ty:-20px; }
+        .orb-3 { width:240px; height:240px; background: var(--orb3); top:40%;  left:55%;   --d:9s;  --tx:20px;  --ty:-40px; }
+        @keyframes orbFloat {
+            0%   { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.15); }
+        }
+
+        /* ── 네비게이션 ── */
+        .top-nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+        }
+
+        @keyframes brandShimmer {
+            0%   { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        .brand {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.7rem;
+            letter-spacing: 1px;
+            text-decoration: none;
+            background: linear-gradient(90deg,
+                #4a90d9 0%, #003478 20%,
+                #C60C30 50%, #ff6680 65%,
+                #003478 80%, #4a90d9 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: brandShimmer 6.5s linear infinite;
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 6px; }
+
+        .nav-links a {
+            color: var(--nav-link);
+            text-decoration: none;
+            margin-left: 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--nav-link-hover); }
+
+        /* 테마 토글 버튼 */
+        .theme-btn {
+            background: var(--toggle-bg);
+            border: 1px solid var(--toggle-border);
+            color: var(--toggle-color);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            margin-left: 16px;
+        }
+        .theme-btn:hover { opacity: 0.8; }
+
+        /* ── 메인 ── */
+        .main-wrap {
+            position: relative;
+            z-index: 5;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 60px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 44px 40px 36px;
+            box-shadow: var(--card-shadow);
+            animation: cardIn 0.7s cubic-bezier(.22,1,.36,1) both;
+            transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(36px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .card-badge { text-align: center; margin-bottom: 20px; }
+        .flag-icon {
+            font-size: 2.6rem;
+            display: inline-block;
+            animation: flagFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 3px 8px rgba(0,0,0,0.3));
+        }
+        @keyframes flagFloat {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-6px); }
+        }
+
+        .card-title {
+            text-align: center;
+            color: var(--title-color);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            transition: color 0.4s ease;
+        }
+        .card-sub {
+            text-align: center;
+            color: var(--sub-color);
+            font-size: 0.82rem;
+            margin-bottom: 28px;
+            transition: color 0.4s ease;
+        }
+        .divider {
+            height: 1px;
+            background: var(--divider);
+            margin-bottom: 28px;
+            transition: background 0.4s ease;
+        }
+
+        /* ── 폼 ── */
+        .form-label {
+            color: var(--label-color);
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: block;
+            transition: color 0.4s ease;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            color: var(--input-color);
+            font-size: 0.92rem;
+            font-family: 'Pretendard', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, color 0.2s;
+        }
+        .form-control::placeholder { color: var(--input-ph); }
+        .form-control:focus {
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 3px var(--input-focus-shadow);
+        }
+        .form-control.is-invalid { border-color: #C60C30; }
+        .form-group { margin-bottom: 18px; }
+
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #C60C30 0%, #8b0020 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Pretendard', sans-serif;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+            box-shadow: 0 4px 18px rgba(198,12,48,0.4);
+        }
+        .btn-login:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(198,12,48,0.55);
+        }
+        .btn-login:active { transform: translateY(0); filter: brightness(0.95); }
+
+        /* ── 에러 ── */
+        .alert-error {
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            border-radius: 10px;
+            color: var(--error-color);
+            font-size: 0.85rem;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: background 0.4s, color 0.4s, border-color 0.4s;
+        }
+
+        /* ── 회원가입 링크 ── */
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--signup-color);
+            transition: color 0.4s ease;
+        }
+        .signup-link a {
+            color: var(--signup-link);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .signup-link a:hover { color: var(--signup-link-h); }
+
+        /* ── 푸터 ── */
+        .bottom-bar {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            padding: 18px;
+            color: var(--footer-color);
+            font-size: 0.78rem;
+            transition: color 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 배경 -->
+    <div class="bg-scene">
+        <div class="bg-gradient"></div>
+        <div class="stars" id="stars"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
     </div>
-</div>
-{% endblock %}
+
+    <!-- 네비게이션 -->
+    <nav class="top-nav">
+        <a href="/" class="brand">the K-Blog</a>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="/">홈</a>
+                <a href="/blog/">블로그</a>
+                <a href="/about_me/">소개</a>
+                <a href="/signup/">회원가입</a>
+            </div>
+            <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </nav>
+
+    <!-- 로그인 카드 -->
+    <div class="main-wrap">
+        <div class="login-card">
+            <div class="card-badge">
+                <span class="flag-icon">🇰🇷</span>
+            </div>
+            <h1 class="card-title">the K-Blog</h1>
+            <p class="card-sub">계정에 로그인하여 계속하세요</p>
+            <div class="divider"></div>
+
+            {% if form.errors %}
+            <div class="alert-error">⚠️ 아이디 또는 비밀번호가 올바르지 않습니다.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.username.id_for_label }}">아이디</label>
+                    <input type="text" name="username" id="{{ form.username.id_for_label }}"
+                           class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                           placeholder="아이디를 입력하세요" autofocus>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.password.id_for_label }}">비밀번호</label>
+                    <input type="password" name="password" id="{{ form.password.id_for_label }}"
+                           class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                           placeholder="비밀번호를 입력하세요">
+                </div>
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn-login">로그인</button>
+            </form>
+
+            <p class="signup-link">아직 계정이 없으신가요? <a href="/signup/">회원가입하기</a></p>
+        </div>
+    </div>
+
+    <div class="bottom-bar">Copyright 2026 &copy; the K-Blog. All rights reserved.</div>
+
+    <script>
+        /* ── 테마 토글 ── */
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const next = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            document.getElementById('theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+        }
+
+        /* 페이지 로드 시 버튼 아이콘 동기화 */
+        (function () {
+            const saved = localStorage.getItem('theme') || 'dark';
+            const btn = document.getElementById('theme-toggle');
+            if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+        })();
+
+        /* ── 파티클 생성 ── */
+        const starsEl = document.getElementById('stars');
+        for (let i = 0; i < 80; i++) {
+            const s = document.createElement('div');
+            const size = Math.random() * 2.5 + 1;
+            s.className = 'star';
+            s.style.cssText = `
+                width:${size}px; height:${size}px;
+                top:${Math.random()*100}%;
+                left:${Math.random()*100}%;
+                --d:${(Math.random()*3+2).toFixed(1)}s;
+                animation-delay:${(Math.random()*4).toFixed(1)}s;
+            `;
+            starsEl.appendChild(s);
+        }
+    </script>
+</body>
+</html>

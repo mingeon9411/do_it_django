@@ -10,7 +10,26 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap">
     <style>
         body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
-        .navbar-brand { font-family: 'Dancing Script', cursive; font-size: 1.6rem; letter-spacing: 1px; }
+        @keyframes brandShimmer {
+            0%   { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        .navbar-brand {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg,
+                #ffffff 0%,
+                #4a90d9 18%, #003478 28%,
+                #ffffff 42%,
+                #C60C30 58%, #ff6680 65%,
+                #ffffff 80%, #ffffff 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: brandShimmer 6.5s linear infinite;
+        }
         .font-ctrl {
             display: inline-flex;
             align-items: center;
@@ -57,6 +76,38 @@
         .k-about-text { font-size:0.82rem; color:#555; margin-bottom:8px; line-height:1.6; }
         .k-about-btn { background:#003478; color:#fff; border:none; font-size:0.8rem; padding:5px 12px; border-radius:4px; text-decoration:none; display:inline-block; transition:background 0.2s; }
         .k-about-btn:hover { background:#C60C30; color:#fff; }
+
+        /* 포스트 본문 이미지 자동 크기 조정 */
+        #postContent img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0.5rem auto;
+            border-radius: 6px;
+        }
+
+        /* ── 페이지 진입 애니메이션 ── */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(28px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        .navbar            { animation: fadeInDown  0.5s ease both; }
+        .detail-article    { animation: fadeInUp    0.6s ease 0.25s both; }
+        .detail-sidebar    { animation: fadeInRight 0.6s ease 0.35s both; }
+        .detail-comments   { animation: fadeInUp    0.6s ease 0.45s both; }
     </style>
 </head>
 <body>
@@ -81,7 +132,7 @@
     <div class="container mt-5">
         <div class="row">
             <!-- 포스트 본문 -->
-            <div class="col-lg-8">
+            <div class="col-lg-8 detail-article">
                 <article>
                     <header class="mb-4">
                         <div class="d-flex justify-content-between align-items-start">
@@ -115,13 +166,13 @@
                     {% if post.head_image %}
                     <figure class="mb-4">
                         <img class="img-fluid rounded w-100" src="{{ post.head_image.url }}"
-                             alt="{{ post.title }}" style="height: 400px; object-fit: cover;" />
+                             alt="{{ post.title }}" style="max-width: 100%; height: auto;" />
                     </figure>
                     {% else %}
                     <figure class="mb-4">
                         <img class="img-fluid rounded w-100"
                              src="https://picsum.photos/seed/{{ post.pk }}/900/400"
-                             alt="{{ post.title }}" style="height: 400px; object-fit: cover;" />
+                             alt="{{ post.title }}" style="max-width: 100%; height: auto;" />
                     </figure>
                     {% endif %}
 
@@ -130,7 +181,7 @@
                     </section>
 
                     <div class="d-flex gap-2 mb-5">
-                        <a href="/blog/{{ post.pk }}/update/" class="btn btn-sm btn-outline-secondary">✏️ 수정</a>
+                        <a href="/blog/{{ post.pk }}/update/" class="btn btn-sm btn-outline-secondary">✏️ 수정하기</a>
                         <a href="/blog/" class="btn btn-sm btn-outline-dark">← 목록으로</a>
                     </div>
                 </article>
@@ -140,7 +191,7 @@
                 </div>
 
                 <!-- 댓글 목록 -->
-                <section class="mb-5">
+                <section class="mb-5 detail-comments">
                     <h4 class="mb-4">댓글 {{ comments.count }}개</h4>
 
                     {% for comment in comments %}
@@ -203,7 +254,7 @@
             </div>
 
             <!-- 사이드바 -->
-            <div class="col-lg-4" style="position:sticky; top:20px; align-self:flex-start; height:fit-content;">
+            <div class="col-lg-4 detail-sidebar" style="position:sticky; top:20px; align-self:flex-start; height:fit-content;">
 
                 <!-- 검색 -->
                 <div class="k-card">

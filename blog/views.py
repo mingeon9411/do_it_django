@@ -93,7 +93,10 @@ class PostCreate(CreateView):
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
-        post = form.save()
+        post = form.save(commit=False)
+        if self.request.user.is_authenticated:
+            post.author = self.request.user
+        post.save()
         _apply_tags(post, form.cleaned_data.get('tags_input', ''))
         return redirect(post.get_absolute_url())
 

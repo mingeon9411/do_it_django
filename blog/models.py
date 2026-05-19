@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 
@@ -44,6 +45,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     head_image = models.ImageField(upload_to='blog/images/', blank=True)
     file_upload = models.FileField(upload_to='blog/files/', blank=True)
+    author = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
     tags = models.ManyToManyField(Tag, blank=True)
 
